@@ -19,7 +19,14 @@ int main(int argc, char *argv[argc + 1]) {
     } else
       count++;
   }
-
+  count = 0;
+  fputs("Select a partition (number): ", stdout);
+  scanf("%d", &count);
+  if (count <= 0) {
+    pclose(fp);
+    return 1;
+  }
+  
   pclose(fp);
   return 0;
 }
