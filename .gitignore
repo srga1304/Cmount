@@ -1,3 +1,5 @@
 myprogram
 *.o
 *.a
+
+.gdb_history
