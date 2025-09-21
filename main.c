@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    // Открываем pipe для чтения вывода lsblk
-    FILE *fp;
-    char buffer[256];
+int main(int argc, char *argv[argc + 1]) {
+  FILE *fp;
+  char buffer[256];
+  int count = 0;
 
-    // -o NAME,MOUNTPOINT,LABEL = колонки имя, точка монтирования и метка
-    fp = popen("lsblk -o NAME,MOUNTPOINT,LABEL", "r");
-    if (fp == NULL) {
-        perror("Ошибка запуска lsblk");
-        return 1;
-    }
+  fp = popen("lsblk -rno NAME,SIZE,TYPE,MOUNTPOINT | awk '$3==\"part\"{print $1, $2, $4}'", "r");
+  if (fp == NULL) {
+    perror("lsblk error");
+    return 1;
+  }
 
-    // Читаем построчно и выводим на экран
-    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        printf("%s", buffer);
-    }
+  while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+    if (count > 0) {
+      printf("%2d: ", count++);
+      printf("%s", buffer);
+    } else
+      count++;
+  }
 
-    // Закрываем pipe
-    pclose(fp);
-    return 0;
+  pclose(fp);
+  return 0;
 }
-
